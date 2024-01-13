@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/people
+    username: alex
+    password: alex
+    driver-class-name: org.postgresql.Driver
+  kafka:
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.example.microservicereciever.serializers.PersonDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-serializer: com.example.microservicereciever.serializers.PersonSerializer
