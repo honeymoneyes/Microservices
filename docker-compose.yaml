@@ -1,4 +1,44 @@
+networks:
+  app-tool:
+    driver: bridge
+
 services:
+
+  zipkin:
+    container_name: zipkin-server
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
+    networks:
+      - app-tool
+
+  eureka:
+    container_name: eureka-server
+    build:
+      context: eureka-server
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 2000:2000
+    networks:
+      - app-tool
+
+  gateway:
+    container_name: api-gateway
+    build:
+      context: api-gateway
+      dockerfile: Dockerfile
+    restart: always
+
+    ports:
+      - 8080:8080
+
+    depends_on:
+      - sender
+      - receiver
+
+    networks:
+      - app-tool
 
   sender:
     container_name: microservice-sender
@@ -8,11 +48,14 @@ services:
     restart: always
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-    ports:
-      - 8080:8080
+      - MANAGEMENT.ZIPKIN.TRACING.ENDPOINT=http://zipkin-server:9411/api/v2/spans
+
     depends_on:
       - kafka
+      - eureka
 
+    networks:
+      - app-tool
 
   receiver:
     container_name: microservice-receiver
@@ -26,13 +69,14 @@ services:
       - SPRING_DATASOURCE_PASSWORD=alex
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - MANAGEMENT.ZIPKIN.TRACING.ENDPOINT=http://zipkin-server:9411/api/v2/spans
     depends_on:
       - db
       - kafka
+      - eureka
 
-    ports:
-      - 8081:8081
-
+    networks:
+      - app-tool
 
   db:
     container_name: db
@@ -46,13 +90,19 @@ services:
     volumes:
       - C:\Users\Alex\Desktop\volume:/var/lib/postgresql/data
 
+    networks:
+      - app-tool
+
   adminer:
     image: adminer
     restart: always
     ports:
-      - 8082:8081
+      - 8082:8080
     depends_on:
       - db
+
+    networks:
+      - app-tool
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -60,6 +110,9 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+
+    networks:
+      - app-tool
 
   kafka:
     container_name: kafka
@@ -74,6 +127,9 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_NUM_PARTITIONS: 3
+
+    networks:
+      - app-tool
 
     depends_on:
       - zookeeper
