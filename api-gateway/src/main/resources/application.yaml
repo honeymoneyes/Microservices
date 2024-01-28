@@ -21,14 +21,35 @@ spring:
           uri: lb://ADD-SERVICE/
           predicates:
             - Path=/add-service/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: add-service
+                fallbackUri: forward:/getServiceFallback
 
         - id: get-service
           uri: lb://GET-SERVICE/
           predicates:
             - Path=/get-service/**
-
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: add-service
+                fallbackUri: forward:/getServiceFallback
 eureka:
   client:
     service-url:
       defaultZone: http://eureka:2000/eureka
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
+
+hystrix:
+  command:
+    fallbackCmd:
+      isolation:
+        thread:
+          timeoutInMilliseconds: 5000
