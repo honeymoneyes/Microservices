@@ -6,7 +6,6 @@ spring:
     name: add-service
 
   kafka:
-
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.example.microservicesender.serializers.PersonSerializer

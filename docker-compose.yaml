@@ -88,7 +88,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - C:\Users\Alex\Desktop\volume:/var/lib/postgresql/data
+      - D:\volume:/var/lib/postgresql/data
 
     networks:
       - app-tool

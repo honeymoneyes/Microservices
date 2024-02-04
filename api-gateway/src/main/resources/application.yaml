@@ -4,17 +4,14 @@ server:
 spring:
   application:
     name: gateway-service
+
   cloud:
     gateway:
       globalcors:
         corsConfigurations:
           '[/**]':
             allowedOrigins: "*"
-            allowedMethods:
-              - GET
-              - PUT
-              - POST
-              - DELETE
+            allowedMethods: "*"
             allowedHeaders: "*"
       routes:
         - id: add-service
@@ -40,16 +37,3 @@ eureka:
   client:
     service-url:
       defaultZone: http://eureka:2000/eureka
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: hystrix.stream
-
-hystrix:
-  command:
-    fallbackCmd:
-      isolation:
-        thread:
-          timeoutInMilliseconds: 5000

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,5 +26,9 @@ public class PersonService {
     public Person save(Person person) {
         System.out.println(person + "- saved!");
         return repository.save(person);
+    }
+
+    public List<Person> getAll() {
+        return repository.findAll();
     }
 }
