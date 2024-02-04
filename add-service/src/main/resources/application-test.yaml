@@ -1,0 +1,21 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: add-service
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.example.addservice.serializers.PersonSerializer
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:2000/eureka
+
+management:
+  tracing:
+    sampling:
+      probability: 1
