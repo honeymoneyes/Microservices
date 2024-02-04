@@ -7,6 +7,9 @@ spring:
 
   cloud:
     gateway:
+      discovery:
+        locator:
+          lower-case-service-id: true
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -15,7 +18,7 @@ spring:
             allowedHeaders: "*"
       routes:
         - id: add-service
-          uri: lb://ADD-SERVICE/
+          uri: lb://add-service/
           predicates:
             - Path=/add-service/**
           filters:
@@ -25,7 +28,7 @@ spring:
                 fallbackUri: forward:/getServiceFallback
 
         - id: get-service
-          uri: lb://GET-SERVICE/
+          uri: lb://get-service/
           predicates:
             - Path=/get-service/**
           filters:

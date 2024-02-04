@@ -34,16 +34,16 @@ services:
       - 8080:8080
 
     depends_on:
-      - sender
-      - receiver
+      - add-service
+      - get-service
 
     networks:
       - app-tool
 
-  sender:
-    container_name: microservice-sender
+  add-service:
+    container_name: add-service
     build:
-      context: microservice-sender
+      context: add-service
       dockerfile: Dockerfile
     restart: always
     environment:
@@ -57,10 +57,10 @@ services:
     networks:
       - app-tool
 
-  receiver:
-    container_name: microservice-receiver
+  get-service:
+    container_name: get-service
     build:
-      context: microservice-reciever
+      context: get-service
       dockerfile: Dockerfile
     restart: always
     environment:
