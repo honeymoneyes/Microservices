@@ -3,12 +3,10 @@ package com.example.getservice.controller;
 import com.example.getservice.entity.Person;
 import com.example.getservice.services.PersonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,8 +18,32 @@ public class PersonController {
     private final PersonService personService;
 
     @GetMapping("/people")
-    public List<Person> get() {
+    public List<Person> getAll() {
         return personService.getAll();
+    }
+
+    @GetMapping("/test-criteria")
+    public List<Person> getCriteriaAll() {
+        return personService.getCriteriaAll();
+    }
+
+    @GetMapping("/test-criteria-by-name/{name}")
+    public List<Person> getCriteriaAllByName(@PathVariable("name") String name) {
+        return personService.getCriteriaAllByName(name);
+    }
+
+    @GetMapping("/test-criteria-order-by")
+    public List<Person> getCriteriaAllByName() {
+        return personService.getCriteriaAllOrderByName();
+    }
+
+    @GetMapping("/dynamic")
+    public List<Person> getAllByParams(
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "name", required = false) String name) {
+        System.out.println(id);
+        System.out.println(name);
+        return personService.getAllByParams(id, name);
     }
 
     @GetMapping("/get/{personId}")

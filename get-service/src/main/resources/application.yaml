@@ -5,11 +5,11 @@ spring:
   application:
     name: get-service
 
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/people
-#    username: alex
-#    password: alex
-#    driver-class-name: org.postgresql.Driver
+  datasource:
+    url: jdbc:postgresql://localhost:5432/people
+    username: alex
+    password: alex
+    driver-class-name: org.postgresql.Driver
 
   kafka:
     consumer:
@@ -19,7 +19,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka:2000/eureka
+      defaultZone: http://localhost:2000/eureka
 
 management:
   tracing:
