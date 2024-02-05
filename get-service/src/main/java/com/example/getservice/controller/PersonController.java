@@ -42,6 +42,7 @@ public class PersonController {
             @RequestParam(value = "name", required = false) String name) {
         System.out.println(id);
         System.out.println(name);
+        System.out.println("Hello");
         return personService.getAllByParams(id, name);
     }
 
