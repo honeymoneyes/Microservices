@@ -3,6 +3,10 @@ package com.example.getservice.services;
 import com.example.getservice.entity.Person;
 import com.example.getservice.entity.Person_;
 import com.example.getservice.repository.PersonRepository;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +18,7 @@ import org.hibernate.query.criteria.JpaRoot;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -108,9 +113,16 @@ public class PersonService {
     }
 
     @KafkaListener(topics = "topic1", groupId = "1")
-    public Person save(Person person) {
+    public void save(String person) throws IOException {
         System.out.println(person + "- saved!");
-        return repository.save(person);
+        JsonNode node = new ObjectMapper().readTree(person);
+
+        var id = node.get("id").asLong();
+        var name = node.get("name").asText();
+        repository.save(Person.builder()
+                .id(id)
+                .name(name)
+                .build());
     }
 
     public List<Person> getAll() {
