@@ -114,11 +114,13 @@ public class PersonService {
 
     @KafkaListener(topics = "topic1", groupId = "1")
     public void save(String person) throws IOException {
+        
         System.out.println(person + "- saved!");
         JsonNode node = new ObjectMapper().readTree(person);
 
         var id = node.get("id").asLong();
         var name = node.get("name").asText();
+
         repository.save(Person.builder()
                 .id(id)
                 .name(name)
