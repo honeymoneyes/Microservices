@@ -24,6 +24,7 @@ public class PersonController {
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody Person person) {
         kafkaTemplate.send(TOPIC_1, person);
+        System.out.println("test");
         return ResponseEntity.status(HttpStatus.OK).body("Message sent!");
     }
 
