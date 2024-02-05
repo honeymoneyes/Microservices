@@ -43,6 +43,7 @@ public class PersonController {
         System.out.println(id);
         System.out.println(name);
         System.out.println("Hello");
+        System.out.println("test-get");
         return personService.getAllByParams(id, name);
     }
 
