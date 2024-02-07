@@ -21,6 +21,12 @@ public class PersonController {
         return personService.getAll();
     }
 
+    @GetMapping("/test-spec")
+    public List<Person> getAllByConditions(@RequestParam(value = "id", required = false) Long id,
+                                           @RequestParam(value = "name", required = false) String name) {
+        return personService.getAllByConditions(id, name);
+    }
+
     @GetMapping("/test-criteria")
     public List<Person> getCriteriaAll() {
         return personService.getCriteriaAll();

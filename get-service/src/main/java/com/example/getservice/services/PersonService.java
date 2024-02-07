@@ -1,25 +1,20 @@
 package com.example.getservice.services;
 
+import com.example.getservice.specifications.PersonSpecifications;
 import com.example.getservice.entity.Person;
 import com.example.getservice.entity.Person_;
 import com.example.getservice.repository.PersonRepository;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
-import org.hibernate.query.criteria.JpaCriteriaQuery;
-import org.hibernate.query.criteria.JpaPredicate;
-import org.hibernate.query.criteria.JpaRoot;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -32,6 +27,12 @@ public class PersonService {
         return repository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+    }
+
+    public List<Person> getAllByConditions(Long id, String name) {
+        var specification = Specification
+                .where(PersonSpecifications.hasFields(id, name));
+        return repository.findAll(specification);
     }
 
     public List<Person> getCriteriaAll() {
@@ -95,10 +96,6 @@ public class PersonService {
 
         var person = criteria.from(Person.class);
 
-        if (id == null && name == null) {
-            return Collections.emptyList();
-        }
-
         if (id != null) {
             predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(person.get(Person_.ID), id));
         }
@@ -114,7 +111,7 @@ public class PersonService {
 
     @KafkaListener(topics = "topic1", groupId = "1")
     public void save(String person) throws IOException {
-        
+
         System.out.println(person + "- saved!");
         JsonNode node = new ObjectMapper().readTree(person);
 
