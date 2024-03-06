@@ -11,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import java.util.List;
 public class PersonService {
     private final EntityManager entityManager;
     private final PersonRepository repository;
+    private final JdbcTemplate jdbcTemplate;
 
     public Person get(Long id) {
         return repository
@@ -110,18 +112,20 @@ public class PersonService {
     }
 
     @KafkaListener(topics = "topic1", groupId = "1")
-    public void save(String person) throws IOException {
-
-        System.out.println(person + "- saved!");
-        JsonNode node = new ObjectMapper().readTree(person);
-
-        var id = node.get("id").asLong();
-        var name = node.get("name").asText();
-
+    public void save(Person person) {
         repository.save(Person.builder()
-                .id(id)
-                .name(name)
+                .name(person.getName())
                 .build());
+    }
+
+    public void saveSpringJdbc() {
+        for (int i = 0; i < 1_000_000; i++) {
+            repository.save(Person.builder()
+                    .name("Save hibernate" + i)
+                    .build());
+
+            jdbcTemplate.update("INSERT INTO person (name) VALUES (?)", "Save JDBC" + i);
+        }
     }
 
     public List<Person> getAll() {

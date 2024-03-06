@@ -15,6 +15,10 @@ import java.util.List;
 public class PersonController {
 
     private final PersonService personService;
+    @PostMapping("/saveJDBC")
+    public void save() {
+        personService.saveSpringJdbc();
+    }
 
     @GetMapping("/people")
     public List<Person> getAll() {
