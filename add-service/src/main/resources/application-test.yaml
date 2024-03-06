@@ -5,6 +5,8 @@ spring:
   application:
     name: add-service
 
+
+
   kafka:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
